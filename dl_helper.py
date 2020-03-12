@@ -1,9 +1,11 @@
 import time
-import torch
-import torch.nn.functional as F
-from sklearn.metrics import classification_report
+
 import torch.optim as optim
 import matplotlib.pyplot as plt
+import torch.nn.functional as F
+from sklearn.metrics import classification_report
+
+from plot_helper import plot_curve
 
 
 
@@ -68,18 +70,16 @@ def _test_epoch(is_val, model, epoch, x, y, batch_size):
     else:
         print("test loss: {} \t 测试准确率: {}".format(round(loss / len(x), 6), round(correct.item() / len(x), 6)))
         print(classification_report(y.cpu(), test_result, digits=6))
+        
     print()
     loss_epoch = round(loss / len(x), 4)
     acc_epoch  = round(correct.item() / len(x), 4)
 
     return loss_epoch,acc_epoch
-
-
-
         
 def train(model,train_x,train_y,val_x,val_y, epochs, batch_size,optimizer=None):
     """
-        模型训练并将模型参数，并将训练过程中每次在验证集上效果有提升时的参数进行保存，训练的同时每5轮输出一次模型评价
+        模型训练并将模型参数，并将训练过程中每次在验证集上效果有提升时的参数进行保存
         param model: 待训练模型
         param optimizer: 优化器
         param train_x: 训练数据，Tensor类型
@@ -114,19 +114,10 @@ def train(model,train_x,train_y,val_x,val_y, epochs, batch_size,optimizer=None):
         if epoch%5==0:
             state = model.state_dict()
             torch.save(state, './model/model-epoch-{}.state'.format(epoch))
-            
-    plt.figure(1)
-    plt.title("Train Trend:")
-    plt.plot(range(1,epochs + 1),train_loss_list,label='train_loss')
-    plt.plot(range(1,epochs + 1),train_acc_list,label='train_acc')
-    plt.legend(loc='upper right')
     
-    if val_x is not None:
-        plt.figure(2)
-        plt.title("Val Trend:")
-        plt.plot(range(1,epochs + 1),val_loss_list,label='val_loss')
-        plt.plot(range(1,epochs + 1),val_acc_list,label='val_acc')
-        plt.legend(loc='upper right')
+    plt_curve(range(1,epochs + 1),[train_loss_list,val_loss_list],["train","test"],"Loss Curve","epoch","Loss")
+    plt_curve(range(1,epochs + 1),[train_acc_list,val_acc_list],["train","test"],"Acc Curve","epoch","Acc")
+    
     
         
 def test(model, test_x, test_y, batch_size):
@@ -142,7 +133,7 @@ def test(model, test_x, test_y, batch_size):
     
 def predict(model, x, batch_size):
     """
-        对数据进行预测
+        对指定数据进行预测
         param model: 进行预测的模型
         param x: 要进行预测的数据向量，Tensor
         param batch_size: 批处理大小
