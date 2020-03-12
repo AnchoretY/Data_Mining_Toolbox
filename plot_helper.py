@@ -95,10 +95,22 @@ def plt_curve(x,y,label,title,xlabel,ylabel,figsize=(8,6),ylim=None,grid=True,ti
     plt.legend(loc="best",prop=font_legend)
     
     
-x = [100,200,300]
-y = [[0.6,0.7,0.9],[0.3,0.6,0.7]]
-title = "Precision Curve"
-label = ["label1","label2"]
-x_label = "epoch"
-y_label = "precision"
-plt_curve(x,y,label,title,x_label,y_label)
+def plot_train_curve(epochs,train_loss_list,train_acc_list,val_loss_list=None,val_acc_list=None):
+    """
+        画训练过程中损失、准确率变化图
+        Parameter:
+        -------------
+            epochs: int,训练轮数
+            train_loss_list: list,训练集各轮数损失函数值
+            train_acc_list: list,训练集各轮数准确率值
+            val_loss_list: list,测试集各轮数损失函数值
+            val_acc_list: list,测试集各轮数准确率值
+    """
+    if val_loss_list is not None:
+        plt_curve(range(1,epochs + 1),[train_loss_list,val_loss_list],["train","test"],"Loss Curve","epoch","Loss")
+        plt_curve(range(1,epochs + 1),[train_acc_list,val_acc_list],["train","test"],"Acc Curve","epoch","Acc")
+    else:
+        plt_curve(range(1,epochs + 1),train_loss_list,"train","Loss Curve","epoch","Loss")
+        plt_curve(range(1,epochs + 1),train_acc_list,"train","Acc Curve","epoch","Acc")
+
+

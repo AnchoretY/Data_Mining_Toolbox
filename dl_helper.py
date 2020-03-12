@@ -115,8 +115,7 @@ def train(model,train_x,train_y,val_x,val_y, epochs, batch_size,optimizer=None):
             state = model.state_dict()
             torch.save(state, './model/model-epoch-{}.state'.format(epoch))
     
-    plt_curve(range(1,epochs + 1),[train_loss_list,val_loss_list],["train","test"],"Loss Curve","epoch","Loss")
-    plt_curve(range(1,epochs + 1),[train_acc_list,val_acc_list],["train","test"],"Acc Curve","epoch","Acc")
+    plot_train_curve(epochs,train_loss_list,train_acc_list,val_loss_list,val_acc_list)
     
     
         
