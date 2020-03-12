@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+
+
 def plt_curve(x,y,title,xlabel,ylabel,label,figsize=(8,6),ylim=None,grid=True,title_size=20,xylabel_size=15,legend_size=12):
     """
         画折线图
@@ -26,7 +28,7 @@ def plt_curve(x,y,title,xlabel,ylabel,label,figsize=(8,6),ylim=None,grid=True,ti
             
         Example:
         --------
-            # 画单条曲线
+            #画单条曲线
             >>> x = [100,200,300]
             >>> y = [0.6,0.7,0.9]
             >>> title = "Precision Curve"
@@ -73,16 +75,14 @@ def plt_curve(x,y,title,xlabel,ylabel,label,figsize=(8,6),ylim=None,grid=True,ti
         plt.grid()
     
     # 画折线
-    line_style = ["o-","o--","o-.","o:"]
-    colors = ["r","g","b"]
+    line_style = ["ro-","go-","ro--","go--","ro-.","go-.","ro:","go:"]
     dim = np.array(x).ndim
-    print(dim)
     if dim==1:
         plt.plot(x,y, 'o-', color="r",
                          label=label)
     if dim==2:
         for i,data in enumerate(x):
-            plt.plot(data,y[i], line_style[i], color=colors[i],
+            plt.plot(data,y[i], line_style[i], 
                          label=label[i])
             
             
@@ -93,3 +93,6 @@ def plt_curve(x,y,title,xlabel,ylabel,label,figsize=(8,6),ylim=None,grid=True,ti
         'size'   : legend_size,
     }
     plt.legend(loc="best",prop=font_legend)
+
+
+
