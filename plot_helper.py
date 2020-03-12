@@ -1,6 +1,6 @@
- import numpy as np
+import numpy as np
 import matplotlib.pyplot as plt
-def plt_learn_curve(x,y,title,xlabel,ylabel,label,figsize=(8,6),ylim=None,grid=True,title_size=20,xylabel_size=15,legend_size=12):
+def plt_curve(x,y,title,xlabel,ylabel,label,figsize=(8,6),ylim=None,grid=True,title_size=20,xylabel_size=15,legend_size=12):
     """
         画折线图
         Parameters:
@@ -26,7 +26,7 @@ def plt_learn_curve(x,y,title,xlabel,ylabel,label,figsize=(8,6),ylim=None,grid=T
             
         Example:
         --------
-            #画单条曲线
+            # 画单条曲线
             >>> x = [100,200,300]
             >>> y = [0.6,0.7,0.9]
             >>> title = "Precision Curve"
