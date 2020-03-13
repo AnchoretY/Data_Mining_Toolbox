@@ -1,11 +1,12 @@
 import time
 
+import torch
 import torch.optim as optim
 import matplotlib.pyplot as plt
 import torch.nn.functional as F
 from sklearn.metrics import classification_report
 
-from plot_helper import plot_curve
+from Data_Mining_Toolbox.plot_helper import plot_train_curve
 
 
 

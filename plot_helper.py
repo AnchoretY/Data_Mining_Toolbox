@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def plt_curve(x,y,label,title,xlabel,ylabel,figsize=(8,6),ylim=None,grid=True,title_size=20,xylabel_size=15,legend_size=12):
+def plot_curve(x,y,label,title,xlabel,ylabel,figsize=(8,6),ylim=None,grid=True,title_size=20,xylabel_size=15,legend_size=12):
     """
         画折线图
         Parameters:
@@ -107,10 +107,9 @@ def plot_train_curve(epochs,train_loss_list,train_acc_list,val_loss_list=None,va
             val_acc_list: list,测试集各轮数准确率值
     """
     if val_loss_list is not None:
-        plt_curve(range(1,epochs + 1),[train_loss_list,val_loss_list],["train","test"],"Loss Curve","epoch","Loss")
-        plt_curve(range(1,epochs + 1),[train_acc_list,val_acc_list],["train","test"],"Acc Curve","epoch","Acc")
+        plot_curve(range(1,epochs + 1),[train_loss_list,val_loss_list],["train","test"],"Loss Curve","epoch","Loss")
+        plot_curve(range(1,epochs + 1),[train_acc_list,val_acc_list],["train","test"],"Acc Curve","epoch","Acc")
     else:
-        plt_curve(range(1,epochs + 1),train_loss_list,"train","Loss Curve","epoch","Loss")
-        plt_curve(range(1,epochs + 1),train_acc_list,"train","Acc Curve","epoch","Acc")
-
+        plot_curve(range(1,epochs + 1),train_loss_list,"train","Loss Curve","epoch","Loss")
+        plot_curve(range(1,epochs + 1),train_acc_list,"train","Acc Curve","epoch","Acc")
 
