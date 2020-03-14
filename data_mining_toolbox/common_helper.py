@@ -16,3 +16,26 @@ def readbunchobj(path):
     with open(path, "rb") as file_obj:
         bunch = pickle.load(file_obj)
     return bunch
+
+#========================================
+#              异常检测
+#========================================
+
+def nsigma_threehold(input_data,n=3):
+    """
+        获取3Sigma法进行异常检测的阈值
+        Parameters:
+        -----------------
+            input_data: 输入数据，series、list
+            n: n sigma中的n,默认为3，int
+        Return:
+        -----------------
+            lower_threehold: 正常数据下阈值
+            upper_threehold: 正常数据上阈值
+    """
+    mean = input_data.mean()
+    std = input_data.std()
+    lower_threehold1 = mean-n*std
+    upper_threehold = mean+n*std
+    print("normal range:{} ~ {}".format(lower_threehold1,upper_threehold))
+    return lower_threehold,upper_threehold

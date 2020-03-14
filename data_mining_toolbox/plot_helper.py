@@ -116,7 +116,7 @@ def plot_train_curve(epochs,train_loss_list,train_acc_list,val_loss_list=None,va
 
 
 
-def plot_distribution(data,data_name):
+def plot_distribution(input_data,data_name):
     """
         画数据分布图
         Parameters:
@@ -128,7 +128,7 @@ def plot_distribution(data,data_name):
     sns.set_color_codes(palette='deep')
     f, ax = plt.subplots(figsize=(8, 7))
     #Check the new distribution 
-    sns.distplot(data, color="b");
+    sns.distplot(input_data, color="b");
     ax.xaxis.grid(False)
     ax.set(ylabel="Frequency")
     ax.set(xlabel=data_name)
