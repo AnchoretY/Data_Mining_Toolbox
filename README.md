@@ -43,8 +43,10 @@
 
    &emsp;&emsp;常用进行**模型各层参数个数、占用内存情况统计**的工具函数。在进行参数统计、内存占用情况时更加普遍被人熟知的工具是torchsummary，但是torchsummary存在对RNN模型不支持、接口奇葩等问题，很容易由于使用原因造成各种bug，因此更加推荐torchsummaryM，**是torchsummarry的进化版，该工具不仅支持RNN、而且接口正常、展示效果更好**。
 
-   &emsp;&emsp;**单个输入**:
+   ![image](https://raw.githubusercontent.com/AnchoretY/images/master/blog/image.sxatnmwkeie.png)
 
+   &emsp;&emsp;**单个输入**:
+   
    ~~~shell
    torchsummaryM.summary(model, torch.randint(0,50,(16,50)).to(device))
    ~~~
