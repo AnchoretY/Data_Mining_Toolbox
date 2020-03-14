@@ -114,3 +114,25 @@ def plot_train_curve(epochs,train_loss_list,train_acc_list,val_loss_list=None,va
         plot_curve(range(1,epochs + 1),train_loss_list,"train","Loss Curve","epoch","Loss")
         plot_curve(range(1,epochs + 1),train_acc_list,"train","Acc Curve","epoch","Acc")
 
+
+
+def plot_distribution(data,data_name):
+    """
+        画数据分布图
+        Parameters:
+        --------------
+            data: 输入数据，series、list
+            data_name: 输入数据的名称,string
+    """
+    sns.set_style("white")
+    sns.set_color_codes(palette='deep')
+    f, ax = plt.subplots(figsize=(8, 7))
+    #Check the new distribution 
+    sns.distplot(data, color="b");
+    ax.xaxis.grid(False)
+    ax.set(ylabel="Frequency")
+    ax.set(xlabel=data_name)
+    ax.set(title="{} distribution".format(data_name))
+    sns.despine(trim=True, left=True)
+    plt.show()
+
