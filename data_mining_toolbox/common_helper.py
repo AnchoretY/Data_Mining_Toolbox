@@ -35,7 +35,27 @@ def nsigma_threehold(input_data,n=3):
     """
     mean = input_data.mean()
     std = input_data.std()
-    lower_threehold1 = mean-n*std
+    lower_threehold = mean-n*std
     upper_threehold = mean+n*std
-    print("normal range:{} ~ {}".format(lower_threehold1,upper_threehold))
+    print("normal range:{} ~ {}".format(lower_threehold,upper_threehold))
+    return lower_threehold,upper_threehold
+    
+def box_threehold(input_data):
+     """
+        获取箱型图法进行异常检测的阈值
+        Parameters:
+        -----------------
+            input_data: 输入数据，series
+        Return:
+        -----------------
+            lower_threehold: 正常数据下阈值
+            upper_threehold: 正常数据上阈值
+    """
+    statistics = input_data.describe() #保存基本统计量
+    IQR = statistics.loc['75%']-statistics.loc['25%']   #四分位数间距
+    QL = statistics.loc['25%']  #下四分位数
+    QU = statistics.loc['75%']  #上四分位数
+    lower_threehold = QL - 1.5 * IQR #下阈值
+    upper_threehold = QU + 1.5 * IQR #上阈值
+    print("normal range:{} ~ {}".format(lower_threehold,upper_threehold))
     return lower_threehold,upper_threehold

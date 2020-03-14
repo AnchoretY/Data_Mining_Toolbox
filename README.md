@@ -12,6 +12,7 @@
    |  writebunchobj(path, bunchobj)   |     对象持久化为pickle文件     |
    |        readbunchobj(path)        |     读取持久化的pickle文件     |
    | nsigma_threehold(input_data,n=3) | 获取nSigma法进行异常检测的阈值 |
+   |    box_threehold(input_data)     | 获取箱型图法进行异常检测的阈值 |
 
 2. #### Plot_helper.py
 
