@@ -20,6 +20,7 @@
    | :----------------------------------------------------------: | :--------------------------------------: |
    | plot_curve(x,y,label,title,xlabel,ylabel,figsize=(8,6),ylim=None,grid=True,title_size=20,xylabel_size=15,legend_size=12) |                 画折线图                 |
    | plot_train_curve(epochs,train_loss_list,train_acc_list,val_loss_list=None,val_acc_list=None) | 画训练过程中的损失函数和准确率变化折线图 |
+   |              plot_distribution(data,data_name)               |               画数据分布图               |
 
 3. #### dl_helper.py
 
