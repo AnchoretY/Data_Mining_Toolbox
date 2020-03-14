@@ -7,10 +7,11 @@
 
    各种数据挖掘任务都可能用到的工具。
 
-   |             函数              |          描述          |
-   | :---------------------------: | :--------------------: |
-   | writebunchobj(path, bunchobj) | 对象持久化为pickle文件 |
-   |      readbunchobj(path)       | 读取持久化的pickle文件 |
+   |               函数               |              描述              |
+   | :------------------------------: | :----------------------------: |
+   |  writebunchobj(path, bunchobj)   |     对象持久化为pickle文件     |
+   |        readbunchobj(path)        |     读取持久化的pickle文件     |
+   | nsigma_threehold(input_data,n=3) | 获取nSigma法进行异常检测的阈值 |
 
 2. #### Plot_helper.py
 
@@ -31,8 +32,6 @@
    | train(model,train_x,train_y,val_x,val_y, epochs, batch_size,optimizer=None) | 模型训练，训练过程中每次在验证集上效果有提升时的参数进行保存，画模型效果变化图 |
    |           test(model, test_x, test_y, batch_size)            |                    在测试集上进行效果测试                    |
    |                predict(model, x, batch_size)                 |                      对指定数据进行预测                      |
-
-
 
 
 
