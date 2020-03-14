@@ -122,7 +122,7 @@ def train(model,train_x,train_y,val_x,val_y, epochs, batch_size,optimizer=None):
         
 def test(model, test_x, test_y, batch_size):
     """
-        在测试集上上进行效果测试
+        在测试集上进行效果测试
         param model: 待测试模型
         param test_x: 测试集数据，Tensor
         param test_y: 测试集标签，Tensor
