@@ -41,7 +41,7 @@ def nsigma_threehold(input_data,n=3):
     return lower_threehold,upper_threehold
     
 def box_threehold(input_data):
-     """
+    """
         获取箱型图法进行异常检测的阈值
         Parameters:
         -----------------
