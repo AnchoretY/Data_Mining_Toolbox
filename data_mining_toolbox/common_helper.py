@@ -95,7 +95,7 @@ def string_to_index(str_list,max_len):
     for idx, row in enumerate(str_list):
         #当domain长度超过max_len时，从一级、二级域名开始计算只保留max_Len位
         if(len(row) > max_len):
-            domain = domain[len(row) - max_len:]
+            row = row[len(row) - max_len:]
         
         tmp = [char_to_idx[ch] for ch in row]
         
