@@ -59,3 +59,51 @@ def box_threehold(input_data):
     upper_threehold = QU + 1.5 * IQR #上阈值
     print("normal range:{} ~ {}".format(lower_threehold,upper_threehold))
     return lower_threehold,upper_threehold
+
+
+#========================================
+#              字符串映射
+#========================================
+
+def string_to_index(str_list,max_len):
+    """
+        将字符串映射为自然数列表，
+            - 只对能够打印的字符串进行映射
+            - 从1开始映射，0保留给补位
+        Parmaeters:
+        -------------------
+            str_list: 2-dim array/list,要进行映射的字符串列表
+            max_len: 映射字符串截取长度
+            
+        Return:
+        -------------------
+            output: 2-dim list,自然数列表
+        
+        Example:
+        ------------------
+            >> string_to_ascii(df_train['domain'].values,100)
+    """
+    import string
+    
+    chars = string.printable  # 获取能够打印的字符串
+    
+    char_to_idx = {ch : idx + 1 for idx, ch in enumerate(chars)}
+    idx_to_char = {idx + 1 : ch for idx, ch in enumerate(chars)}
+    
+    output = []
+    
+    for idx, row in enumerate(str_list):
+        #当domain长度超过max_len时，从一级、二级域名开始计算只保留max_Len位
+        if(len(row) > max_len):
+            domain = domain[len(row) - max_len:]
+        
+        tmp = [char_to_idx[ch] for ch in row]
+        
+        if(len(tmp) < max_len):
+            # 当域名长度不够max_len时，映射为自然数后在后面补零
+            tmp = tmp + [0 for i in range(max_len - len(tmp))]
+        
+        output.append(tmp)
+    return output
+
+
