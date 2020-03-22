@@ -78,18 +78,22 @@ def _test_epoch(is_val, model, epoch, x, y, batch_size):
 
     return loss_epoch,acc_epoch
         
-def train(model,train_x,train_y,val_x,val_y, epochs, batch_size,optimizer=None,save_prefix=""):
+def train(model,train_x,train_y,val_x,val_y, epochs, batch_size,save_prefix,optimizer=None):
     """
         模型训练并将模型参数，并将训练过程中每次在验证集上效果有提升时的参数进行保存
-        param model: 待训练模型
-        param optimizer: 优化器
-        param train_x: 训练数据，Tensor类型
-        param train_y: 训练数据标签，Tensor类型
-        param val_x: 验证集数据，Tensor类型
-        param val_y: 验证集标签，Tensor类型
-        param epochs: 要训练的轮数
-        param batch_size: 批处理大小
-        param optimizer: 优化器
+        Prameters:
+        --------------
+            param model: 待训练模型
+            param optimizer: 优化器
+            param train_x: 训练数据，Tensor类型
+            param train_y: 训练数据标签，Tensor类型
+            param val_x: 验证集数据，Tensor类型
+            param val_y: 验证集标签，Tensor类型
+            param epochs: 要训练的轮数
+            param batch_size: 批处理大小
+            param save_prefix: 存储使得前缀名，一般为模型名，最终存储格式为{}-model-epoch-{}'.format(save_prefix,epoch)
+            param optimizer: 优化器
+
 
     """
     max_val_score = 0
@@ -114,12 +118,11 @@ def train(model,train_x,train_y,val_x,val_y, epochs, batch_size,optimizer=None,s
             
         if epoch%5==0:
             state = model.state_dict()
-            if save_prefix=="":
-                torch.save(state, './model/model-epoch-{}.state'.format(epoch))
-            else:
-                torch.save(state, './model/{}-model-epoch-{}.state'.format(save_prefix,epoch))
+            torch.save(state, './model/{}-model-epoch-{}.state'.format(save_prefix,epoch))
+                
+    images_prefix_name = "{}-model-epoch-{}".format(save_prefix,epoch)
     
-    plot_train_curve(epochs,train_loss_list,train_acc_list,val_loss_list,val_acc_list)
+    plot_train_curve(epochs,train_loss_list,train_acc_list,val_loss_list,val_acc_list,images_prefix_name)
     
     
         
