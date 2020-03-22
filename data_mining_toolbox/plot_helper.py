@@ -3,7 +3,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-def plot_curve(x,y,label,title,xlabel,ylabel,figsize=(8,6),ylim=None,grid=True,title_size=20,xylabel_size=15,legend_size=12):
+def plot_curve(x,y,label,title,xlabel,ylabel,figsize=(8,6),ylim=None,\
+    grid=True,title_size=20,xylabel_size=15,legend_size=12,save_name=""):
     """
         画折线图
         Parameters:
@@ -26,6 +27,7 @@ def plot_curve(x,y,label,title,xlabel,ylabel,figsize=(8,6),ylim=None,grid=True,t
             title_size: 标题字号
             xylabel_size: 横纵坐标变量名称字号
             legend_size: 图例字号
+            save_name: 图片存储名称，默认不进行存储
             
         Example:
         --------
@@ -36,7 +38,7 @@ def plot_curve(x,y,label,title,xlabel,ylabel,figsize=(8,6),ylim=None,grid=True,t
             >>> label = "label1"
             >>> x_label = "epoch"
             >>> y_label = "precision"
-            >>> plot_curve(x,y,title,x_label,y_label,label)
+            >>> plt_learn_curve(x,y,title,x_label,y_label,label)
             
             # 画多条曲线
             >>> x = [[100,200,300],[100,200,300]]
@@ -45,7 +47,7 @@ def plot_curve(x,y,label,title,xlabel,ylabel,figsize=(8,6),ylim=None,grid=True,t
             >>> label = ["label1","label2"]
             >>> x_label = "epoch"
             >>> y_label = "precision"
-            >>> plot_curve(x,y,title,x_label,y_label,label)
+            >>> plt_learn_curve(x,y,title,x_label,y_label,label)
         
     """
     plt.figure(figsize=figsize)
@@ -94,9 +96,16 @@ def plot_curve(x,y,label,title,xlabel,ylabel,figsize=(8,6),ylim=None,grid=True,t
         'size'   : legend_size,
     }
     plt.legend(loc="best",prop=font_legend)
-    
-    
-def plot_train_curve(epochs,train_loss_list,train_acc_list,val_loss_list=None,val_acc_list=None):
+    import os
+
+
+    if save_name!="":
+        if not os.path.exists("./images/"):
+            os.makedirs("./images/")
+        plt.savefig("./images/{}".format(save_name))
+        
+        
+def plot_train_curve(epochs,train_loss_list,train_acc_list,val_loss_list=None,val_acc_list=None,save_name=""):
     """
         画训练过程中损失、准确率变化图
         Parameter:
@@ -106,13 +115,16 @@ def plot_train_curve(epochs,train_loss_list,train_acc_list,val_loss_list=None,va
             train_acc_list: list,训练集各轮数准确率值
             val_loss_list: list,测试集各轮数损失函数值
             val_acc_list: list,测试集各轮数准确率值
+            save_name: string,图片存储名称，默认不进行存储
     """
+    
     if val_loss_list is not None:
-        plot_curve(range(1,epochs + 1),[train_loss_list,val_loss_list],["train","test"],"Loss Curve","epoch","Loss")
-        plot_curve(range(1,epochs + 1),[train_acc_list,val_acc_list],["train","test"],"Acc Curve","epoch","Acc")
+        plot_curve(range(1,epochs + 1),[train_loss_list,val_loss_list],["train","val"],"Loss Curve","epoch","Loss",save_name=save_name)
+        plot_curve(range(1,epochs + 1),[train_acc_list,val_acc_list],["train","val"],"Acc Curve","epoch","Acc",save_name=save_name)
     else:
-        plot_curve(range(1,epochs + 1),train_loss_list,"train","Loss Curve","epoch","Loss")
-        plot_curve(range(1,epochs + 1),train_acc_list,"train","Acc Curve","epoch","Acc")
+        plot_curve(range(1,epochs + 1),train_loss_list,"train","Loss Curve","epoch","Loss",save_name="")
+        plot_curve(range(1,epochs + 1),train_acc_list,"train","Acc Curve","epoch","Acc",save_name="")
+
 
 
 
