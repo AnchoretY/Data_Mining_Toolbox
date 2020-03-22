@@ -36,7 +36,7 @@ def plot_curve(x,y,label,title,xlabel,ylabel,figsize=(8,6),ylim=None,grid=True,t
             >>> label = "label1"
             >>> x_label = "epoch"
             >>> y_label = "precision"
-            >>> plt_learn_curve(x,y,title,x_label,y_label,label)
+            >>> plot_curve(x,y,title,x_label,y_label,label)
             
             # 画多条曲线
             >>> x = [[100,200,300],[100,200,300]]
@@ -45,7 +45,7 @@ def plot_curve(x,y,label,title,xlabel,ylabel,figsize=(8,6),ylim=None,grid=True,t
             >>> label = ["label1","label2"]
             >>> x_label = "epoch"
             >>> y_label = "precision"
-            >>> plt_learn_curve(x,y,title,x_label,y_label,label)
+            >>> plot_curve(x,y,title,x_label,y_label,label)
         
     """
     plt.figure(figsize=figsize)
