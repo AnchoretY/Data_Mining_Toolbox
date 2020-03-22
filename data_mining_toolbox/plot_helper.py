@@ -105,7 +105,7 @@ def plot_curve(x,y,label,title,xlabel,ylabel,figsize=(8,6),ylim=None,\
         plt.savefig("./images/{}".format(save_name))
         
         
-def plot_train_curve(epochs,train_loss_list,train_acc_list,val_loss_list=None,val_acc_list=None,save_name=""):
+def plot_train_curve(epochs,train_loss_list,train_acc_list,save_prefix,val_loss_list=None,val_acc_list=None):
     """
         画训练过程中损失、准确率变化图
         Parameter:
@@ -113,17 +113,18 @@ def plot_train_curve(epochs,train_loss_list,train_acc_list,val_loss_list=None,va
             epochs: int,训练轮数
             train_loss_list: list,训练集各轮数损失函数值
             train_acc_list: list,训练集各轮数准确率值
+            save_prefix: string,图片存储名称前缀
             val_loss_list: list,测试集各轮数损失函数值
             val_acc_list: list,测试集各轮数准确率值
-            save_name: string,图片存储名称，默认不进行存储
+            
     """
     
     if val_loss_list is not None:
-        plot_curve(range(1,epochs + 1),[train_loss_list,val_loss_list],["train","val"],"Loss Curve","epoch","Loss",save_name=save_name)
-        plot_curve(range(1,epochs + 1),[train_acc_list,val_acc_list],["train","val"],"Acc Curve","epoch","Acc",save_name=save_name)
+        plot_curve(range(1,epochs + 1),[train_loss_list,val_loss_list],["train","val"],"Loss Curve","epoch","Loss",save_name=save_prefix+"-loss")
+        plot_curve(range(1,epochs + 1),[train_acc_list,val_acc_list],["train","val"],"Acc Curve","epoch","Acc",save_name=save_prefix+"-acc")
     else:
-        plot_curve(range(1,epochs + 1),train_loss_list,"train","Loss Curve","epoch","Loss",save_name="")
-        plot_curve(range(1,epochs + 1),train_acc_list,"train","Acc Curve","epoch","Acc",save_name="")
+        plot_curve(range(1,epochs + 1),train_loss_list,"train","Loss Curve","epoch","Loss",save_prefix+"-loss")
+        plot_curve(range(1,epochs + 1),train_acc_list,"train","Acc Curve","epoch","Acc",save_prefix+"-acc")
 
 
 

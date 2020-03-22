@@ -120,7 +120,7 @@ def train(model,train_x,train_y,val_x,val_y, epochs, batch_size,save_prefix,opti
             state = model.state_dict()
             torch.save(state, './model/{}-model-epoch-{}.state'.format(save_prefix,epoch))
                 
-    images_prefix_name = "{}-model-epoch-{}".format(save_prefix,epoch)
+    images_prefix_name = "{}-model-epoch-{}".format(save_prefix,epochs)
     
     plot_train_curve(epochs,train_loss_list,train_acc_list,val_loss_list,val_acc_list,images_prefix_name)
     
