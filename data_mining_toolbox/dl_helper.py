@@ -78,7 +78,7 @@ def _test_epoch(is_val, model, epoch, x, y, batch_size):
 
     return loss_epoch,acc_epoch
         
-def train(model,train_x,train_y,val_x,val_y, epochs, batch_size,optimizer=None):
+def train(model,train_x,train_y,val_x,val_y, epochs, batch_size,optimizer=None,save_prefix=""):
     """
         模型训练并将模型参数，并将训练过程中每次在验证集上效果有提升时的参数进行保存
         param model: 待训练模型
@@ -114,7 +114,10 @@ def train(model,train_x,train_y,val_x,val_y, epochs, batch_size,optimizer=None):
             
         if epoch%5==0:
             state = model.state_dict()
-            torch.save(state, './model/model-epoch-{}.state'.format(epoch))
+            if save_prefix=="":
+                torch.save(state, './model/model-epoch-{}.state'.format(epoch))
+            else:
+                torch.save(state, './model/{}-model-epoch-{}.state'.format(save_prefix,epoch))
     
     plot_train_curve(epochs,train_loss_list,train_acc_list,val_loss_list,val_acc_list)
     
