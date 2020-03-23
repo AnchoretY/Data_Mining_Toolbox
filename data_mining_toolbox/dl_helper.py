@@ -4,7 +4,7 @@ import torch
 import torch.optim as optim
 import matplotlib.pyplot as plt
 import torch.nn.functional as F
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report,precision_score,recall_score,roc_auc_score
 
 from Data_Mining_Toolbox.plot_helper import plot_train_curve
 
@@ -144,7 +144,7 @@ def test(model, test_x, test_y, batch_size):
     
 def predict(model, x, batch_size,proba=False):
     """
-        对指定数据进行预测
+        获取预测类别
         Parameters:
         ----------------
             model: 进行预测的模型
@@ -162,10 +162,33 @@ def predict(model, x, batch_size,proba=False):
     for index in range(0, len(x), batch_size):
         data = x[index : index + batch_size]
         output = model(data)
-        if proba==False:
-            pred = output.data.max(1)[1]
-        else:
-            pred = output.data.max(1)[0]
+        pred = output.data.max(1)[1]
+
+        result += [i for i in pred.cpu().numpy()]
+        
+    return result
+
+def predict_proba(model, x, batch_size,proba=False):
+    """
+        预测为目标类别的概率
+        Parameters:
+        ----------------
+            model: 进行预测的模型
+            x: 要进行预测的数据向量，Tensor
+            batch_size: 批处理大小,Int
+            proba: 输出类型，True表示输出为1的概率，False表示输出类别，默认为False
+        
+        Return:
+        -----------------
+            result: 预测的label值，list
+    """
+    
+    model.eval()
+    result = []
+    for index in range(0, len(x), batch_size):
+        data = x[index : index + batch_size]
+        output = model(data)
+        pred = output.data.max(1)[0]
         result += [i for i in pred.cpu().numpy()]
         
     return result
@@ -193,7 +216,6 @@ def compare_model(model_list,test_data,label):
         pred = list(map(lambda x:1 if x>0.5 else 0,proba))
         model_name = model.__class__.__name__
         matrix = confusion_matrix(label,pred)
-        print(matrix)
         tp = matrix[1][1]
         fp = matrix[1][0]
         tn = matrix[0][0]
