@@ -169,3 +169,39 @@ def predict(model, x, batch_size,proba=False):
         result += [i for i in pred.cpu().numpy()]
         
     return result
+
+def compare_model(model_list,test_data,label):
+    """
+        比较多各模型的效果，评价指标包括TP、FP、TN、FN、Precision、Recall、AUC等
+        Parmeters:
+        -----------------
+            model_list: 要进行比较的模型列表
+            test_data: Tensor要进行测试的数据的向量
+            label: Tensor,测试数据的标签值
+            
+        Return:
+        -----------------
+            df: Dataframe,模型效果对比表
+        
+    """
+    batch_size = 128
+    columns = ['model','tp','fp','tn','fn','precision','recall','auc']
+    result = []
+    label = label.cpu().numpy()
+    for model in model_list:
+        proba = predict(model,test_data,batch_size,proba=True)
+        pred = list(map(lambda x:1 if x>0.5 else 0,proba))
+        model_name = model.__class__.__name__
+        matrix = confusion_matrix(label,pred)
+        print(matrix)
+        tp = matrix[1][1]
+        fp = matrix[1][0]
+        tn = matrix[0][0]
+        fn = matrix[0][1]
+        precision = precision_score(label,pred,1)
+        recall = recall_score(label,pred,1)
+        auc = roc_auc_score(label,proba)      
+        
+        result.append([model_name,tp,fp,tn,fn,precision,recall,auc])
+    df = pd.DataFrame(result,columns=columns)
+    return df
