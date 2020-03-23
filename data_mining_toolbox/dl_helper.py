@@ -13,12 +13,14 @@ from Data_Mining_Toolbox.plot_helper import plot_train_curve
 def _train_epoch(model, optimizer, epoch, x, y, batch_size):
     """
         进行1轮模型训练
-        param model: 模型
-        param optimier: 优化器
-        param epoch:当前轮次
-        param x:输入数据，需要为Tensor
-        param y:标签,必须为Tensor
-        param batch_size:批处理大小
+        Parameters:
+        ----------------
+            model: 模型
+            optimier: 优化器
+            epoch:当前轮次
+            x:输入数据，需要为Tensor
+            y:标签,必须为Tensor
+            batch_size:批处理大小
     """
     model.train()
     start_time = time.time()
@@ -46,12 +48,14 @@ def _train_epoch(model, optimizer, epoch, x, y, batch_size):
 def _test_epoch(is_val, model, epoch, x, y, batch_size):
     """ 
         进行1轮模型测试
-        param model: 模型
-        param optimier: 优化器
-        param epoch:当前轮次
-        param x:输入数据，需要为Tensor
-        param y:标签,必须为Tensor
-        param batch_size:批处理大小
+        Parameters:
+        -------------------
+        model: 模型
+        optimier: 优化器
+        epoch:当前轮次
+        x:输入数据，需要为Tensor
+        y:标签,必须为Tensor
+        batch_size:批处理大小
     """
     model.eval()
     loss = 0
@@ -83,17 +87,16 @@ def train(model,train_x,train_y,val_x,val_y, epochs, batch_size,save_prefix,opti
         模型训练并将模型参数，并将训练过程中每次在验证集上效果有提升时的参数进行保存
         Prameters:
         --------------
-            param model: 待训练模型
-            param optimizer: 优化器
-            param train_x: 训练数据，Tensor类型
-            param train_y: 训练数据标签，Tensor类型
-            param val_x: 验证集数据，Tensor类型
-            param val_y: 验证集标签，Tensor类型
-            param epochs: 要训练的轮数
-            param batch_size: 批处理大小
-            param save_prefix: 存储使得前缀名，一般为模型名，最终存储格式为{}-model-epoch-{}'.format(save_prefix,epoch)
-            param optimizer: 优化器
-
+            model: 待训练模型
+            optimizer: 优化器
+            train_x: 训练数据，Tensor类型
+            train_y: 训练数据标签，Tensor类型
+            val_x: 验证集数据，Tensor类型
+            val_y: 验证集标签，Tensor类型
+            epochs: 要训练的轮数
+            batch_size: 批处理大小
+            save_prefix: 存储使得前缀名，一般为模型名，最终存储格式为{}-model-epoch-{}'.format(save_prefix,epoch)
+            optimizer: 优化器
 
     """
     max_val_score = 0
@@ -129,21 +132,29 @@ def train(model,train_x,train_y,val_x,val_y, epochs, batch_size,save_prefix,opti
 def test(model, test_x, test_y, batch_size):
     """
         在测试集上进行效果测试
-        param model: 待测试模型
-        param test_x: 测试集数据，Tensor
-        param test_y: 测试集标签，Tensor
-        param batch_size: 批处理大小
+        Parmeters:
+        ----------------
+            model: 待测试模型
+            test_x: 测试集数据，Tensor
+            test_y: 测试集标签，Tensor
+            batch_size: 批处理大小
         
     """
     _test_epoch(False, model, 1, test_x, test_y, batch_size)
     
-def predict(model, x, batch_size):
+def predict(model, x, batch_size,proba=False):
     """
         对指定数据进行预测
-        param model: 进行预测的模型
-        param x: 要进行预测的数据向量，Tensor
-        param batch_size: 批处理大小
-        return result:预测的label值，list
+        Parameters:
+        ----------------
+            model: 进行预测的模型
+            x: 要进行预测的数据向量，Tensor
+            batch_size: 批处理大小,Int
+            proba: 输出类型，True表示输出为1的概率，False表示输出类别，默认为False
+        
+        Return:
+        -----------------
+            result: 预测的label值，list
     """
     
     model.eval()
@@ -151,6 +162,10 @@ def predict(model, x, batch_size):
     for index in range(0, len(x), batch_size):
         data = x[index : index + batch_size]
         output = model(data)
-        pred = output.data.max(1)[1]
+        if proba==False:
+            pred = output.data.max(1)[1]
+        else:
+            pred = output.data.max(1)[0]
         result += [i for i in pred.cpu().numpy()]
+        
     return result
