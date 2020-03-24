@@ -4,7 +4,8 @@ import torch
 import torch.optim as optim
 import matplotlib.pyplot as plt
 import torch.nn.functional as F
-from sklearn.metrics import classification_report,precision_score,recall_score,roc_auc_score
+from sklearn.metrics import classification_report,\
+    confusion_matrix,precision_score,recall_score,roc_auc_score
 
 from Data_Mining_Toolbox.plot_helper import plot_train_curve
 
