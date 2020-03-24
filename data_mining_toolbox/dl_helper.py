@@ -228,3 +228,49 @@ def compare_model(model_list,test_data,label):
         result.append([model_name,tp,fp,tn,fn,precision,recall,auc])
     df = pd.DataFrame(result,columns=columns)
     return df
+
+
+def compare_diff_epoch(model,test_data,label,epochs,name_prefix=""):
+    """
+        比较单个模型在不同训练轮数在测试集上的表现，最终输出总轮数的五个分为点时模型在测试集上的表现
+        Parmeters:
+        -----------------
+            model_list: 要进行比较的模型列表
+            test_data: Tensor要进行测试的数据的向量
+            label: Tensor,测试数据的标签值
+            epochs: 训练的总轮数
+            name_prefix: 加载模型的前缀名，默认为为模型名，最终输出格式为./model/{name_prefix}-model-epoch-{epoch}.state
+            
+        Return:
+        -----------------
+            df: Dataframe,模型五个分为点时模型在测试集上的效果对比表
+        
+    """
+    if name_prefix=="":
+        name_prefix = model.__class__.__name__
+    
+    
+    batch_size = 128
+    epoch_list = [int(epochs/5*i) for i in range(1,6)]
+    columns = ['model','epoch','tp','fp','tn','fn','precision','recall','auc']
+    result = []
+    label = label.cpu().numpy()
+    
+    
+    for epoch in epoch_list:
+        model.load_state_dict(torch.load("./model/{}-model-epoch-{}.state".format(name_prefix,epoch)))
+        proba = predict(model,test_data,batch_size,proba=True)
+        pred = list(map(lambda x:1 if x>0.5 else 0,proba))
+        model_name = model.__class__.__name__
+        matrix = confusion_matrix(label,pred)
+        tp = matrix[1][1]
+        fp = matrix[1][0]
+        tn = matrix[0][0]
+        fn = matrix[0][1]
+        precision = precision_score(label,pred,1)
+        recall = recall_score(label,pred,1)
+        auc = roc_auc_score(label,proba)      
+        
+        result.append([model_name,epoch,tp,fp,tn,fn,precision,recall,auc])
+    df = pd.DataFrame(result,columns=columns)
+    return df
