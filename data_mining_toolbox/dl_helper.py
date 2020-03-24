@@ -1,6 +1,6 @@
 import time
-
 import torch
+import pandas as pd
 import torch.optim as optim
 import matplotlib.pyplot as plt
 import torch.nn.functional as F

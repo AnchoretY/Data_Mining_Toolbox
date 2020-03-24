@@ -34,6 +34,7 @@
    | train(model,train_x,train_y,val_x,val_y, epochs, batch_size,optimizer=None) | 模型训练，训练过程中每次在验证集上效果有提升时的参数进行保存，画模型效果变化图 |
    |           test(model, test_x, test_y, batch_size)            |                    在测试集上进行效果测试                    |
    |                predict(model, x, batch_size)                 |                      对指定数据进行预测                      |
+   |          compare_model(model_list,test_data,label)           |        对多个模型在精确率、召回率、AUC等方面进行比较         |
 
 
 
