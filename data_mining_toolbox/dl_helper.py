@@ -1,3 +1,4 @@
+import os
 import time
 import torch
 import pandas as pd
@@ -194,7 +195,7 @@ def predict_proba(model, x, batch_size,proba=False):
         
     return result
 
-def compare_model(model_list,test_data,label):
+def compare_model(model_list,test_data,label,save_name="model_compare_report"):
     """
         比较多各模型的效果，评价指标包括TP、FP、TN、FN、Precision、Recall、AUC等
         Parmeters:
@@ -227,6 +228,11 @@ def compare_model(model_list,test_data,label):
         
         result.append([model_name,tp,fp,tn,fn,precision,recall,auc])
     df = pd.DataFrame(result,columns=columns)
+
+    if not os.path.exists("./report/"):
+        os.makedirs("./report/")
+    df.to_csv("./report/{}.csv".format(save_name),index=False)
+
     return df
 
 
@@ -273,4 +279,9 @@ def compare_diff_epoch(model,test_data,label,epochs,name_prefix=""):
         
         result.append([model_name,epoch,tp,fp,tn,fn,precision,recall,auc])
     df = pd.DataFrame(result,columns=columns)
+
+    if not os.path.exists("./report/"):
+        os.makedirs("./report/")
+    df.to_csv("./report/{}_compare_diff_epoch_report.csv".format(name_prefix),index=False)
+
     return df
