@@ -8,7 +8,7 @@ import torch.nn.functional as F
 from sklearn.metrics import classification_report,\
     confusion_matrix,precision_score,recall_score,roc_auc_score
 
-from Data_Mining_Toolbox.plot_helper import plot_train_curve
+from data_mining_toolbox.plot_helper import plot_train_curve
 
 
 
@@ -144,15 +144,13 @@ def test(model, test_x, test_y, batch_size):
     """
     _test_epoch(False, model, 1, test_x, test_y, batch_size)
     
-def predict(model, x, batch_size,proba=False):
+def predict(model, x):
     """
         获取预测类别
         Parameters:
         ----------------
             model: 进行预测的模型
             x: 要进行预测的数据向量，Tensor
-            batch_size: 批处理大小,Int
-            proba: 输出类型，True表示输出为1的概率，False表示输出类别，默认为False
         
         Return:
         -----------------
@@ -161,6 +159,7 @@ def predict(model, x, batch_size,proba=False):
     
     model.eval()
     result = []
+    batch_size = 128
     for index in range(0, len(x), batch_size):
         data = x[index : index + batch_size]
         output = model(data)
@@ -170,7 +169,7 @@ def predict(model, x, batch_size,proba=False):
         
     return result
 
-def predict_proba(model, x, batch_size,proba=False):
+def predict_proba(model, x):
     """
         预测为目标类别的概率
         Parameters:
@@ -187,6 +186,7 @@ def predict_proba(model, x, batch_size,proba=False):
     
     model.eval()
     result = []
+    batch_size = 128
     for index in range(0, len(x), batch_size):
         data = x[index : index + batch_size]
         output = model(data)
