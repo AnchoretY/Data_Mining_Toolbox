@@ -122,7 +122,7 @@ def plot_train_curve(epochs,train_loss_list,train_acc_list,val_loss_list=None,va
         plot_curve(range(1,epochs + 1),[train_loss_list,val_loss_list],["train","val"],\
                    "Loss Curve","epoch","Loss",save_name="{}-loss".format(save_prefix))
         plot_curve(range(1,epochs + 1),[train_acc_list,val_acc_list],["train","val"],\
-                   "Acc Curve","epoch","Acc",save_name="{}-loss".format(save_prefix))
+                   "Acc Curve","epoch","Acc",save_name="{}-acc".format(save_prefix))
     else:
         plot_curve(range(1,epochs + 1),train_loss_list,"train","Loss Curve","epoch","Loss",\
                    save_name="{}-loss".format(save_prefix))
