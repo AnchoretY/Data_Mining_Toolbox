@@ -1,6 +1,7 @@
 import os
 import time
 import torch
+import logging
 import pandas as pd
 import torch.optim as optim
 import matplotlib.pyplot as plt
@@ -39,8 +40,8 @@ def _train_epoch(model, optimizer, epoch, x, y, batch_size):
         pred = output.data.max(1)[1]
         correct += pred.eq(label.data).cpu().sum()
         
-    print("Train epoch: {} \t Time elapse: {}s".format(epoch, int(time.time() - start_time)))
-    print("Train Loss: {}  \t 训练准确率: {}".format(round(loss.item(), 4), round(correct.item() / len(x), 4)))
+    logging.info("Train epoch: {} \t Time elapse: {}s".format(epoch, int(time.time() - start_time)))
+    logging.info("Train Loss: {}  \t 训练准确率: {}".format(round(loss.item(), 4), round(correct.item() / len(x), 4)))
     
     loss_epoch = round(loss.item(), 4)
     acc_epoch  = round(correct.item()/len(x),4)
@@ -73,12 +74,12 @@ def _test_epoch(is_val, model, epoch, x, y, batch_size):
         test_result += [i for i in pred.cpu().numpy()]
 
     if(is_val):
-        print("Val loss: {} \t 验证准确率: {}".format(round(loss / len(x), 6), round(correct.item() / len(x), 6)))
+        logging.info("Val loss: {} \t 验证准确率: {}".format(round(loss / len(x), 6), round(correct.item() / len(x), 6)))
     else:
-        print("test loss: {} \t 测试准确率: {}".format(round(loss / len(x), 6), round(correct.item() / len(x), 6)))
-        print(classification_report(y.cpu(), test_result, digits=6))
+        logging.info("test loss: {} \t 测试准确率: {}".format(round(loss / len(x), 6), round(correct.item() / len(x), 6)))
+        logging.info(classification_report(y.cpu(), test_result, digits=6))
         
-    print()
+    logging.info("")
     loss_epoch = round(loss / len(x), 4)
     acc_epoch  = round(correct.item() / len(x), 4)
 
@@ -232,6 +233,7 @@ def compare_model(model_list,test_data,label,save_name="model_compare_report"):
     if not os.path.exists("./report/"):
         os.makedirs("./report/")
     df.to_csv("./report/{}.csv".format(save_name),index=False)
+    logging.info("different model compare into ./report/{}.csv".format(save_name))
 
     return df
 
@@ -283,5 +285,6 @@ def compare_diff_epoch(model,test_data,label,epochs,name_prefix=""):
     if not os.path.exists("./report/"):
         os.makedirs("./report/")
     df.to_csv("./report/{}_compare_diff_epoch_report.csv".format(name_prefix),index=False)
+    logging.info("different epoch compare report into ./report/{}_compare_diff_epoch_report.csv".format(name_prefix))
 
     return df

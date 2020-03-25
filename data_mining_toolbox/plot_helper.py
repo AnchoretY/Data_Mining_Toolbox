@@ -1,3 +1,4 @@
+import logging
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -102,6 +103,7 @@ def plot_curve(x,y,label,title,xlabel,ylabel,figsize=(8,6),ylim=None,\
         if not os.path.exists("./images/"):
             os.makedirs("./images/")
         plt.savefig("./images/{}".format(save_name))
+    logging.info("images save to ./images/{} success!".format(save_name))
         
         
 def plot_train_curve(epochs,train_loss_list,train_acc_list,val_loss_list=None,val_acc_list=None,save_prefix='model'):
