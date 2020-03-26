@@ -13,7 +13,7 @@ from data_mining_toolbox.plot_helper import plot_train_curve
 
 
 
-def _train_epoch(model, optimizer, epoch, x, y, batch_size):
+def _train_epoch(model, optimizer, epoch, x, y, batch_size,*args):
     """
         进行1轮模型训练
         Parameters:
@@ -24,16 +24,26 @@ def _train_epoch(model, optimizer, epoch, x, y, batch_size):
             x:输入数据，需要为Tensor
             y:标签,必须为Tensor
             batch_size:批处理大小
+        Args:
+        ----------------
+            train_another_x: 模型训练的额外输入
     """
+    
     model.train()
     start_time = time.time()
     loss = 0
     correct = 0
     for index in range(0, len(x), batch_size):
         data = x[index : index + batch_size]
+        
+        if len(args) == 1:
+            data = [data, args[0][index : index + batch_size]]
+        else:
+            data = [data]
+            
         label = y[index : index + batch_size]
         optimizer.zero_grad()
-        output = model(data)
+        output = model(*data)
         loss = F.cross_entropy(output, label)
         loss.backward()
         optimizer.step()
@@ -48,7 +58,7 @@ def _train_epoch(model, optimizer, epoch, x, y, batch_size):
 
     return loss_epoch,acc_epoch
 
-def _test_epoch(is_val, model, epoch, x, y, batch_size):
+def _test_epoch(is_val, model, epoch, x, y, batch_size,*args):
     """ 
         进行1轮模型测试
         Parameters:
@@ -59,6 +69,9 @@ def _test_epoch(is_val, model, epoch, x, y, batch_size):
         x:输入数据，需要为Tensor
         y:标签,必须为Tensor
         batch_size:批处理大小
+        Args:
+        ----------------
+            val_another_x: 模型验证、测试的额外输入
     """
     model.eval()
     loss = 0
@@ -66,8 +79,14 @@ def _test_epoch(is_val, model, epoch, x, y, batch_size):
     test_result = []
     for index in range(0, len(x), batch_size):
         data = x[index : index + batch_size]
+        
+        if len(args) == 1:
+            data = [data, args[0][index : index + batch_size]]
+        else:
+            data = [data]
+        
         label = y[index : index + batch_size]
-        output = model(data)
+        output = model(*data)
         loss += F.cross_entropy(output, label, size_average=False).item()
         pred = output.data.max(1)[1]
         correct += pred.eq(label.data).cpu().sum()
@@ -77,7 +96,7 @@ def _test_epoch(is_val, model, epoch, x, y, batch_size):
         logging.info("Val loss: {} \t 验证准确率: {}".format(round(loss / len(x), 6), round(correct.item() / len(x), 6)))
     else:
         logging.info("test loss: {} \t 测试准确率: {}".format(round(loss / len(x), 6), round(correct.item() / len(x), 6)))
-        logging.info(classification_report(y.cpu(), test_result, digits=6))
+        logging.info("\n{}".format(classification_report(y.cpu(), test_result, digits=6)))
         
     logging.info("")
     loss_epoch = round(loss / len(x), 4)
@@ -85,7 +104,7 @@ def _test_epoch(is_val, model, epoch, x, y, batch_size):
 
     return loss_epoch,acc_epoch
         
-def train(model,train_x,train_y,val_x,val_y, epochs, batch_size,save_prefix,optimizer=None):
+def train(model,train_x,train_y,val_x,val_y, epochs, batch_size,save_prefix,optimizer=None,*args):
     """
         模型训练并将模型参数，并将训练过程中每次在验证集上效果有提升时的参数进行保存
         Prameters:
@@ -100,8 +119,18 @@ def train(model,train_x,train_y,val_x,val_y, epochs, batch_size,save_prefix,opti
             batch_size: 批处理大小
             save_prefix: 存储使得前缀名，一般为模型名，最终存储格式为{}-model-epoch-{}'.format(save_prefix,epoch)
             optimizer: 优化器
+            
+        *Args：
+        -----------------
+            train_another_tensor: 训练集另外的输入tensor
+            val_another_tensor: 验证、测试集另外的输入张量
+            目前，只支持具有一个额外参数的模型
 
     """
+    # 额外参数只允许不输入或者输入两个参数
+    if len(args)!=0 and len(args)!=2:
+        raise Exception("*args Only 0 or 2 additional parameters can be entered !")
+        
     max_val_score = 0
     
     train_loss_list,train_acc_list = [],[]
@@ -111,10 +140,9 @@ def train(model,train_x,train_y,val_x,val_y, epochs, batch_size,save_prefix,opti
         optimizer = optim.Adam(params=model.parameters(), lr=0.0001, weight_decay=0.00001)
         
     for epoch in range(1, epochs + 1):
-        
-        train_loss_epoch,train_acc_epoch = _train_epoch(model, optimizer, epoch, train_x, train_y, batch_size)
+        train_loss_epoch,train_acc_epoch = _train_epoch(model, optimizer, epoch, train_x, train_y, batch_size,args[0])
         if val_x is not None:
-            val_loss_epoch,val_acc_epoch = _test_epoch(True, model, epoch, val_x, val_y, batch_size)
+            val_loss_epoch,val_acc_epoch = _test_epoch(True, model, epoch, val_x, val_y, batch_size,args[1])
         
         train_loss_list.append(train_loss_epoch)
         train_acc_list.append(train_acc_epoch)
@@ -132,7 +160,7 @@ def train(model,train_x,train_y,val_x,val_y, epochs, batch_size,save_prefix,opti
     
     
         
-def test(model, test_x, test_y, batch_size):
+def test(model, test_x, test_y, batch_size,*args):
     """
         在测试集上进行效果测试
         Parmeters:
@@ -143,9 +171,9 @@ def test(model, test_x, test_y, batch_size):
             batch_size: 批处理大小
         
     """
-    _test_epoch(False, model, 1, test_x, test_y, batch_size)
+    _test_epoch(False, model, 1, test_x, test_y, batch_size,args[0])
     
-def predict(model, x):
+def predict(model, x,*args):
     """
         获取预测类别
         Parameters:
@@ -163,7 +191,13 @@ def predict(model, x):
     batch_size = 128
     for index in range(0, len(x), batch_size):
         data = x[index : index + batch_size]
-        output = model(data)
+        
+        if len(args) == 1:
+            data = [data, args[0][index : index + batch_size]]
+        else:
+            data = [data]
+        
+        output = model(*data)
         pred = output.data.max(1)[1]
 
         result += [i for i in pred.cpu().numpy()]
