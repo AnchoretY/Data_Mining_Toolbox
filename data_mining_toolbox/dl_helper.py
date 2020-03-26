@@ -209,7 +209,7 @@ def predict(model, x,*args):
         
     return result
 
-def predict_proba(model, x):
+def predict_proba(model, x,*args):
     """
         预测为目标类别的概率
         Parameters:
@@ -229,7 +229,9 @@ def predict_proba(model, x):
     batch_size = 128
     for index in range(0, len(x), batch_size):
         data = x[index : index + batch_size]
-        output = model(data)
+        if len(args)==1:
+            data = [data,args[0][index : index + batch_size]]
+        output = model(*data)
         pred = output.data[:,1]
         result += [i for i in pred.cpu().numpy()]
         
@@ -250,14 +252,11 @@ def compare_model(model_list,test_data,label,save_name="model_compare_report"):
         
     """
     batch_size = 128
-    columns = ['model','tp','fp','tn','fn','precision','recall','auc','predict_time']
+    columns = ['model','tp','fp','tn','fn','precision','recall','auc']
     result = []
     label = label.cpu().numpy()
     for model in model_list:
-        start_time = time.time()
         proba = predict_proba(model,test_data)
-        end_time = time.time()
-        predict_time = end_time-start_time
         pred = list(map(lambda x:1 if x>0.5 else 0,proba))
         model_name = model.__class__.__name__
         matrix = confusion_matrix(label,pred)
@@ -269,7 +268,7 @@ def compare_model(model_list,test_data,label,save_name="model_compare_report"):
         recall = recall_score(label,pred,1)
         auc = roc_auc_score(label,proba)      
         
-        result.append([model_name,tp,fp,tn,fn,precision,recall,auc,predict_time])
+        result.append([model_name,tp,fp,tn,fn,precision,recall,auc])
     df = pd.DataFrame(result,columns=columns)
 
     if not os.path.exists("./report/"):
@@ -280,7 +279,7 @@ def compare_model(model_list,test_data,label,save_name="model_compare_report"):
     return df
 
 
-def compare_diff_epoch(model,test_data,label,epochs,name_prefix=""):
+def compare_diff_epoch(model,test_data,label,epochs,name_prefix="",*args):
     """
         比较单个模型在不同训练轮数在测试集上的表现，最终输出总轮数的五个分为点时模型在测试集上的表现
         Parmeters:
@@ -310,7 +309,7 @@ def compare_diff_epoch(model,test_data,label,epochs,name_prefix=""):
     for epoch in epoch_list:
         model.load_state_dict(torch.load("./model/{}-model-epoch-{}.state".format(name_prefix,epoch)))
         logging.info("read model state: ./model/{}-model-epoch-{}.state".format(name_prefix,epoch))
-        proba = predict_proba(model,test_data)
+        proba = predict_proba(model,test_data,*args)
         pred = list(map(lambda x:1 if x>0.5 else 0,proba))
         model_name = model.__class__.__name__
         matrix = confusion_matrix(label,pred)
