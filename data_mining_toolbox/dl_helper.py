@@ -250,11 +250,14 @@ def compare_model(model_list,test_data,label,save_name="model_compare_report"):
         
     """
     batch_size = 128
-    columns = ['model','tp','fp','tn','fn','precision','recall','auc']
+    columns = ['model','tp','fp','tn','fn','precision','recall','auc','predict_time']
     result = []
     label = label.cpu().numpy()
     for model in model_list:
+        start_time = time.time()
         proba = predict_proba(model,test_data)
+        end_time = time.time()
+        predict_time = end_time-start_time
         pred = list(map(lambda x:1 if x>0.5 else 0,proba))
         model_name = model.__class__.__name__
         matrix = confusion_matrix(label,pred)
@@ -266,7 +269,7 @@ def compare_model(model_list,test_data,label,save_name="model_compare_report"):
         recall = recall_score(label,pred,1)
         auc = roc_auc_score(label,proba)      
         
-        result.append([model_name,tp,fp,tn,fn,precision,recall,auc])
+        result.append([model_name,tp,fp,tn,fn,precision,recall,auc,predict_time])
     df = pd.DataFrame(result,columns=columns)
 
     if not os.path.exists("./report/"):
