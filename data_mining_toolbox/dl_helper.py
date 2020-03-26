@@ -7,7 +7,7 @@ import torch.optim as optim
 import matplotlib.pyplot as plt
 import torch.nn.functional as F
 from sklearn.metrics import classification_report,\
-    confusion_matrix,precision_score,recall_score,roc_auc_score
+    confusion_matrix,precision_score,recall_score,f1_score,roc_auc_score
 
 from data_mining_toolbox.plot_helper import plot_train_curve
 
@@ -140,9 +140,14 @@ def train(model,train_x,train_y,val_x,val_y, epochs, batch_size,save_prefix,opti
         optimizer = optim.Adam(params=model.parameters(), lr=0.0001, weight_decay=0.00001)
         
     for epoch in range(1, epochs + 1):
-        train_loss_epoch,train_acc_epoch = _train_epoch(model, optimizer, epoch, train_x, train_y, batch_size,args[0])
-        if val_x is not None:
-            val_loss_epoch,val_acc_epoch = _test_epoch(True, model, epoch, val_x, val_y, batch_size,args[1])
+        if len(args)!=0:
+            train_loss_epoch,train_acc_epoch = _train_epoch(model, optimizer, epoch, train_x, train_y, batch_size,args[0])
+            if val_x is not None:
+                val_loss_epoch,val_acc_epoch = _test_epoch(True, model, epoch, val_x, val_y, batch_size,args[1])
+        else:
+            train_loss_epoch,train_acc_epoch = _train_epoch(model, optimizer, epoch, train_x, train_y, batch_size)
+            if val_x is not None:
+                val_loss_epoch,val_acc_epoch = _test_epoch(True, model, epoch, val_x, val_y, batch_size)
         
         train_loss_list.append(train_loss_epoch)
         train_acc_list.append(train_acc_epoch)
@@ -225,7 +230,7 @@ def predict_proba(model, x):
     for index in range(0, len(x), batch_size):
         data = x[index : index + batch_size]
         output = model(data)
-        pred = output.data.max(1)[0]
+        pred = output.data[:,1]
         result += [i for i in pred.cpu().numpy()]
         
     return result
@@ -249,7 +254,7 @@ def compare_model(model_list,test_data,label,save_name="model_compare_report"):
     result = []
     label = label.cpu().numpy()
     for model in model_list:
-        proba = predict(model,test_data,batch_size,proba=True)
+        proba = predict_proba(model,test_data)
         pred = list(map(lambda x:1 if x>0.5 else 0,proba))
         model_name = model.__class__.__name__
         matrix = confusion_matrix(label,pred)
@@ -294,14 +299,15 @@ def compare_diff_epoch(model,test_data,label,epochs,name_prefix=""):
     
     batch_size = 128
     epoch_list = [int(epochs/5*i) for i in range(1,6)]
-    columns = ['model','epoch','tp','fp','tn','fn','precision','recall','auc']
+    columns = ['model','epoch','tp','fp','tn','fn','precision','recall','f1-score','auc']
     result = []
     label = label.cpu().numpy()
     
     
     for epoch in epoch_list:
         model.load_state_dict(torch.load("./model/{}-model-epoch-{}.state".format(name_prefix,epoch)))
-        proba = predict(model,test_data,batch_size,proba=True)
+        logging.info("read model state: ./model/{}-model-epoch-{}.state".format(name_prefix,epoch))
+        proba = predict_proba(model,test_data)
         pred = list(map(lambda x:1 if x>0.5 else 0,proba))
         model_name = model.__class__.__name__
         matrix = confusion_matrix(label,pred)
@@ -309,11 +315,12 @@ def compare_diff_epoch(model,test_data,label,epochs,name_prefix=""):
         fp = matrix[1][0]
         tn = matrix[0][0]
         fn = matrix[0][1]
-        precision = precision_score(label,pred,1)
-        recall = recall_score(label,pred,1)
+        precision = precision_score(label,pred)
+        recall = recall_score(label,pred)
+        f1 = f1_score(label,pred)
         auc = roc_auc_score(label,proba)      
         
-        result.append([model_name,epoch,tp,fp,tn,fn,precision,recall,auc])
+        result.append([model_name,epoch,tp,fp,tn,fn,precision,recall,f1,auc])
     df = pd.DataFrame(result,columns=columns)
 
     if not os.path.exists("./report/"):
